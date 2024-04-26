@@ -1,0 +1,18 @@
+FROM osrf/ros:humble-desktop
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+RUN apt-get update
+RUN apt-get install -y apt-utils 
+RUN apt-get install -y python3-dev python3-pip libffi-dev ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
+
+COPY ./gg-component/ros2-adapter/requirements.txt .
+RUN pip3 install -r requirements.txt
+
+COPY ./bin/template_files/cyclonedds_localhost.xml /cyclonedds.xml
+
+COPY ./gg-component/ros2-adapter/. /app
+
+ENTRYPOINT ["/app/start_docker.gg.sh"]
+CMD ["bash"]
